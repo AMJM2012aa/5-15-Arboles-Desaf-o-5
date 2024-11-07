@@ -1,0 +1,41 @@
+class Nodo:
+    def __init__(self, valor):
+        self.valor = valor
+        self.izquierdo = None
+        self.derecho = None
+
+def construir_arbol_postfija(expresion):
+    pila = []
+    for token in expresion:
+        if token.isdigit():  # Si es un número, creamos un nodo hoja
+            pila.append(Nodo(int(token)))
+        else:  # Si es un operador, creamos un nodo con dos hijos
+            nodo = Nodo(token)
+            nodo.derecho = pila.pop()  # Derecho primero, ya que es una pila
+            nodo.izquierdo = pila.pop()
+            pila.append(nodo)
+    return pila.pop()  # La raíz del árbol
+
+def evaluar_arbol(nodo):
+    if nodo.izquierdo is None and nodo.derecho is None:  # Si es una hoja, devolvemos el valor
+        return nodo.valor
+    
+    # Evaluamos recursivamente los hijos izquierdo y derecho
+    izquierdo_valor = evaluar_arbol(nodo.izquierdo)
+    derecho_valor = evaluar_arbol(nodo.derecho)
+    
+    # Aplicamos el operador
+    if nodo.valor == '+':
+        return izquierdo_valor + derecho_valor
+    elif nodo.valor == '-':
+        return izquierdo_valor - derecho_valor
+    elif nodo.valor == '*':
+        return izquierdo_valor * derecho_valor
+    elif nodo.valor == '/':
+        return izquierdo_valor / derecho_valor
+
+# Ejemplo de uso
+expresion_postfija = ['3', '4', '+', '2', '*', '7', '/']  # Representa la expresión (3 + 4) * 2 / 7
+arbol = construir_arbol_postfija(expresion_postfija)
+resultado = evaluar_arbol(arbol)
+print("Resultado de la expresión:", resultado)
